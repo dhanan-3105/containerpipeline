@@ -1,17 +1,24 @@
-box: nodesource/trusty
+# docker box definition
+box:
+  id: openjdk
+  ports:
+    - "8080"
+
+# defining the dev pipeline
+dev:
+  steps:
+    # A step that executes `gradle bootRun` command
+    - script:
+      name: run gradle
+      code: |
+        ./gradlew bootRun
+
 # Build definition
 build:
   # The steps that will be executed on build
   steps:
-    # A step that executes `npm install` command
-    - npm-install
-    # A step that executes `npm test` command
-    - npm-test
-
-    # A custom script step, name value is used in the UI
-    # and the code value contains the command that get executed
+    # A step that executes `gradle build` command
     - script:
-        name: echo nodejs information
+        name: run gradle
         code: |
-          echo "node version $(node -v) running"
-          echo "npm version $(npm -v) running"
+          ./gradlew --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR build
